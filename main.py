@@ -24,7 +24,7 @@ port = 5000
 # redirect_uri = 'http://' + request.environ['REMOTE_ADDR'] + ':' + str(port) + '/code'
 redirect_uri_local = 'http://localhost:' + str(port) + '/code'
 redirect_uri_heroku = 'https://inoreader-api.herokuapp.com/code'
-redirect_uri = redirect_uri_local
+redirect_uri = redirect_uri_heroku
 
 oauth = OAuth2Session(client_id, redirect_uri=redirect_uri,
                       scope=scope)
