@@ -102,6 +102,7 @@ print('Categories and number of items')
 print('- ' * 20)
 
 s = json.dumps(categories, indent=4, sort_keys=True)
+
 print(s)
 
 print('- ' * 20)
