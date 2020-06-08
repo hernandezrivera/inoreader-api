@@ -21,8 +21,11 @@ days_back = 1
 scope = ['read']
 port = 5000
 
-#redirect_uri = 'http://' + request.environ['REMOTE_ADDR'] + ':' + str(port) + '/code'
-redirect_uri = 'http://localhost:' + str(port) + '/code'
+# redirect_uri = 'http://' + request.environ['REMOTE_ADDR'] + ':' + str(port) + '/code'
+redirect_uri_local = 'http://localhost:' + str(port) + '/code'
+redirect_uri_heroku = 'https://inoreader-api.herokuapp.com/code'
+redirect_uri = redirect_uri_local
+
 oauth = OAuth2Session(client_id, redirect_uri=redirect_uri,
                       scope=scope)
 authorization_url, state = oauth.authorization_url(
@@ -30,6 +33,7 @@ authorization_url, state = oauth.authorization_url(
     # access_type and prompt are Google specific extra
     # parameters.
     state="test")
+
 
 def make_call_to_json(url, debug=False):
     r = oauth.get(url)
@@ -47,36 +51,10 @@ def make_call_to_json(url, debug=False):
     return data
 
 
-# TODO: To remove this method
-@app.route('/getmsg/', methods=['GET'])
-def respond():
-    # Retrieve the name from url parameter
-    name = request.args.get("name", None)
-
-    # For debugging
-    print(f"got name {name}")
-
-    response = {}
-
-    # Check if user sent a name at all
-    if not name:
-        response["ERROR"] = "no name found, please send a name."
-    # Check if the user entered a number not a name
-    elif str(name).isdigit():
-        response["ERROR"] = "name can't be numeric."
-    # Now the user entered a valid name
-    else:
-        response["MESSAGE"] = f"Welcome {name} to our awesome platform!!"
-
-    # Return the response in json format
-    return jsonify(response)
-
-
-# TODO: To remove this method
 @app.route('/post', methods=['POST'])
 def post_something():
     authorization_response = request.form.get('code')
-    date = request.form.get('date-from')
+    date = request.form.get('date')
     read_content = request.form.get('read-content')
 
     while True:
@@ -93,6 +71,8 @@ def post_something():
             continue
         else:
             break
+
+    print(date)
 
     non_read_str = read_content
     non_read = not ((non_read_str == 'N') or (non_read_str == 'n') or (non_read_str == 'No'))
@@ -131,28 +111,21 @@ def post_something():
         else:
             continuation = contents['continuation']
 
-    print('- ' * 20)
-    print('Categories and number of items')
-    print('- ' * 20)
-
-    s = json.dumps(categories, indent=4, sort_keys=True)
-
-    print(s)
-    print('- ' * 20)
-
-    return render_template('results.html', results=s)
+    return render_template('results.html', results_dict=categories, date=date, non_read=non_read)
 
 
 @app.route('/code')
 def get_code():
     authorization_code = request.args.get('code')
-    return render_template('code.html', code=authorization_code, days_back=days_back)
+    today = datetime.date.today()
+    date = today - datetime.timedelta(days=days_back)
+
+    return render_template('code.html', code=authorization_code, days_back=days_back, date=date)
 
 
 # A welcome message to test our server
 @app.route('/')
 def index():
-
     return render_template('home.html', url=authorization_url, days_back=days_back)
 
 

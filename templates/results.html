@@ -1,14 +1,38 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <link href="//cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
-    <title>Flask Tutorial</title>
+    <title>RW Inoreader API - Results</title>
   </head>
-  <body>
+  <body class="mui-container-fluid">
     <h1> Results </h1>
-    <p>Categories and number of items</p>
-    <p> {{results}} </p>
+    <p>Number of items in each category:
+      <ul>
+      <li>Since {{date}}</li>
+      <li>Including only non-read:  {{non_read}} </li>
+    </ul></p>
 
+
+<a class="mui-btn mui-btn--raised" href="/" > Do another query</a>
+
+  <table class="mui-table mui-table--bordered" >
+    <thead>
+    <tr>
+      <th>Category</th>
+      <th>Items</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for key, value in results_dict.items() %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 
 

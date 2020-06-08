@@ -1,24 +1,37 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
-    <title>Flask Tutorial</title>
+      <link href="//cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet" type="text/css" />
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="utf-8">
+      <title>RW Inoreader API - Config</title>
   </head>
-  <body>
+  <body class="mui-container-fluid">
+    <h1> Introduce the paramaters for the query </h1>
 
-  <form action = /post method="POST">
-        <label for="code">Enter the value following the code parameter in the redirected URL</label>
-        <input type="text" name="code" id="code" value={{code}} size="15">
+  <form class="mui-form" action = /post method="POST">
 
-        <label for="date-from">Date from -- empty = {{days_back}} days ago</label>
-        <input type="text" name="date" id=date" size="15">
+        <div class="mui-textfield">
+        <input type="text" name="code" id="code" value={{code}} >
+        <label for="code">Value following the code parameter in the redirected URL</label>
+        </div>
 
-        <label for="read-content">All content (N) / Non-read content (Y) -- default = Y</label>
-        <input type="text" name="read-content" id=read-content" size="15">
+        <div class="mui-textfield">
+        <label for="date">Date from (YYYY-MM-DD) / Default:  {{days_back}} days ago</label>
+        <input type="text" name="date" id=date" value={{date}} >
+        </div>
 
-        <input type="submit" name="submit" id="submit"/>
+        <label for="read-content">What content do you want to count?</label>
+        <div class="mui-radio"><label>
+        <input type="radio" name="read-content" id="True" value="N" checked> All Content
+        </label></div>
+        <div class="mui-radio"><label>
+        <input type="radio" name="read-content" id="False" value="Y" > Non-read content
+        </label></div>
+
+        <input class="mui-btn mui-btn--raised" type="submit" name="submit" id="submit"/>
  </form>
 
-
   </body>
+
 </html>
