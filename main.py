@@ -8,6 +8,10 @@ import datetime
 
 from flask import Flask, request, jsonify, render_template
 
+
+## To get all the feeds https://www.inoreader.com/reader/api/0/subscription/list
+## To get item ids for each feed, and count them (one call for starred and one call for non starred)
+
 app = Flask(__name__)
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -24,7 +28,7 @@ port = 5000
 # redirect_uri = 'http://' + request.environ['REMOTE_ADDR'] + ':' + str(port) + '/code'
 redirect_uri_local = 'http://localhost:' + str(port) + '/code'
 redirect_uri_heroku = 'https://inoreader-api.herokuapp.com/code'
-redirect_uri = redirect_uri_heroku
+redirect_uri = redirect_uri_local
 
 oauth = OAuth2Session(client_id, redirect_uri=redirect_uri,
                       scope=scope)

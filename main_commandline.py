@@ -1,4 +1,4 @@
-# from oauthlib.oauth2 import BackendApplicationClient  
+# from oauthlib.oauth2 import BackendApplicationClient
 from pip._vendor.distlib.compat import raw_input
 from requests_oauthlib import OAuth2Session
 import os
@@ -8,12 +8,12 @@ import datetime
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 debug = False
-n_items = 100  # maximum number of articles to return. Max 100 . The higher, the less API calls.
+n_items = 2  # maximum number of articles to return. Max 100 . The higher, the less API calls.
 
 client_id = r'999999707'
 client_secret = r'Ic1LlZ3yaPOnOfepzUJ5MsyWLOo3CAlB'
 redirect_uri = 'https://google.com'
-days_back = 14
+days_back = 1
 
 scope = ['read']
 oauth = OAuth2Session(client_id, redirect_uri=redirect_uri,
@@ -59,6 +59,7 @@ token = oauth.fetch_token(
 
 def make_call_to_json(url, debug=False):
     r = oauth.get(url)
+    r.raise_for_status()
     contents = r.content
 
     my_json = contents.decode('utf8').replace("'", '"')
