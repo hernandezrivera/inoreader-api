@@ -1,6 +1,7 @@
 import inoreader_functions
 import datetime
 import os
+import sys
 
 # TODO: Add error control: (1) Token expired / not valid (2) Exceed number of requests/quota
 
@@ -12,37 +13,57 @@ client_secret = r'Ic1LlZ3yaPOnOfepzUJ5MsyWLOo3CAlB'
 redirect_uri = 'https://google.com'
 
 n_items = 100  # maximum number of articles to return in each call. Max 100 . The higher, the less API calls.
-n_calls = 75  # maximum number of calls to do to the API for getting all articles (there will be more calls than this)
+n_calls = 300  # maximum number of calls to do to the API for getting all articles. Maximum 117?
 # Set low for testing purposes. 117 maximum before reaching quota limit.
-# 75 is a good number, so we can allow also calls for getting starred articles.
-# TRY 1: with 99999 calls, it reaches the quota limit after getting 11700 articles, \
-# a timespan of 11.79 days from 5/22/24 16:36 to 6/3/24 11:35 (which makes 117 calls maximum to do)
-# TRY 2: 70 calls / 7 to starred. Gathered 7009 articles from 28/5/2024 13:23:07 to 4/6/2024 11:55:00 \
-# (6.94 days, not getting to 7 days)
-# TRY 3: 75 calls / 8 to starred. Gathered 7510 articles from 5/28/24 21:41 to 6/5/24 10:15 (7.52380787 days)
+
+# The ID of the GDrive folder where you want to upload the file
+folder_id = '1vAzq3KU_dFsQbQCD-u1oBCFpbdbc3MSt'  # "Inoreader data" folder on ds@hrinfo
 
 default_days_back = 7
+drive_creds = inoreader_functions.connect_to_googledrive()
+init_date_unix, end_date_unix = inoreader_functions.prompt_variables(default_days_back)
 
-date_unix, non_read = inoreader_functions.prompt_variables(default_days_back)
 print("Thanks for the input. Now we will connect to Inoreader")
+
 oauth = inoreader_functions.make_connection(client_id, client_secret, redirect_uri)
-print("Connection established. Gathering data from inoreader.")
-feeds, categories, articles = inoreader_functions.get_categories(oauth, n_items, n_calls, date_unix, non_read, debug)
-print("Data gathered and saved locally. Uploading to Google Drive")
 
-# Create the names of the files based on the dates
-start_date = datetime.datetime.fromtimestamp(date_unix)
-now_date = datetime.datetime.now()
-start_date_str = start_date.strftime('%Y%m%d-%H%M')
-now_date_str = now_date.strftime('%Y%m%d-%H%M')
-feeds_filename = f"feeds-{start_date_str}-{now_date_str}.csv"
-categories_filename = f"categories-{start_date_str}-{now_date_str}.csv"
-articles_filename = f"articles-{start_date_str}-{now_date_str}.csv"
-foldername = "data"
+if oauth is None:
+    sys.exit()
 
-inoreader_functions.datalist_to_csv(foldername + "/" + feeds_filename, feeds)
-inoreader_functions.datalist_to_csv(foldername + "/" + categories_filename, categories)
-inoreader_functions.datalist_to_csv(foldername + "/" + articles_filename, articles)
-inoreader_functions.upload_csv_to_googledrive(feeds_filename, foldername)
-inoreader_functions.upload_csv_to_googledrive(categories_filename, foldername)
-inoreader_functions.upload_csv_to_googledrive(articles_filename, foldername)
+print("\nConnection established. ")
+print("\nGathering feeds from Inoreader.")
+feeds_list = inoreader_functions.get_feeds(oauth, debug)
+
+print("\n\nGathering articles from Inoreader.")
+feeds, categories, articles, first_day, last_day = inoreader_functions.get_articles(oauth, n_items, n_calls,
+                                                                                    init_date_unix, end_date_unix,
+                                                                                    debug)
+print("Articles gathered\n")
+
+if len(articles) > 0:
+    print("Saving data into local CSV files")
+    # Create the names of the files based on the dates
+    start_date = datetime.datetime.fromtimestamp(first_day)
+    end_date = datetime.datetime.fromtimestamp(last_day)
+    start_date_str = start_date.strftime('%Y%m%d')
+    end_date_str = end_date.strftime('%Y%m%d')
+
+    folder_name = "data"
+    feeds_list_filename = f"feeds-list.csv"
+    feeds_filename = f"feeds-{start_date_str}-{end_date_str}.csv"
+    categories_filename = f"categories-{start_date_str}-{end_date_str}.csv"
+    articles_filename = f"articles-{start_date_str}-{end_date_str}.csv"
+
+    inoreader_functions.datalist_to_csv(folder_name + "/" + feeds_list_filename, feeds_list)
+    inoreader_functions.datalist_to_csv(folder_name + "/" + feeds_filename, feeds)
+    inoreader_functions.datalist_to_csv(folder_name + "/" + categories_filename, categories)
+    inoreader_functions.datalist_to_csv(folder_name + "/" + articles_filename, articles)
+
+    print("Data saved locally (" + folder_name + "/" + articles_filename + ").")
+
+    # print("\nUploading files  to Google Drive")
+    # inoreader_functions.upload_csv_to_googledrive(drive_creds, feeds_list_filename, folder_id, folder_name)
+    # inoreader_functions.upload_csv_to_googledrive(drive_creds, feeds_filename, folder_id, folder_name)
+    # inoreader_functions.upload_csv_to_googledrive(drive_creds, categories_filename, folder_id, folder_name)
+    # inoreader_functions.upload_csv_to_googledrive(drive_creds, articles_filename, folder_id, folder_name)
+    # print("Files uploaded. Your data can be found at https://drive.google.com/drive/folders/" + folder_id)
