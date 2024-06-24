@@ -39,6 +39,7 @@ feeds, categories, articles, first_day, last_day = inoreader_functions.get_artic
                                                                                     debug)
 print("Articles gathered\n")
 
+# Created the CSV files and save them to local disk
 if len(articles) > 0:
     print("Saving data into local CSV files")
     # Create the names of the files based on the dates

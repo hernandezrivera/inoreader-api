@@ -166,7 +166,7 @@ def datalist_to_csv(dir_path, filename, data_list):
     if data_list:
         keys = data_list[0].keys()
 
-        #creates the directory if it doesn't exist
+        # creates the directory if it doesn't exist
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
