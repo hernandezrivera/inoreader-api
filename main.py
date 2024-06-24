@@ -1,3 +1,4 @@
+# import gdrive_functions
 import inoreader_functions
 import datetime
 import os
@@ -18,7 +19,7 @@ n_calls = 300  # maximum number of calls to do to the API for getting all articl
 folder_id = '1vAzq3KU_dFsQbQCD-u1oBCFpbdbc3MSt'  # "Inoreader data" folder on ds@hrinfo
 
 default_days_back = 7
-drive_creds = inoreader_functions.connect_to_googledrive()
+# drive_creds = gdrive_functions.connect_to_googledrive()
 init_date_unix, end_date_unix = inoreader_functions.prompt_variables(default_days_back)
 
 print("Thanks for the input. Now we will connect to Inoreader")
