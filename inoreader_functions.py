@@ -4,8 +4,9 @@ import time
 import datetime
 import os.path
 from requests_oauthlib import OAuth2Session
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
+import googleapiclient
+# from googleapiclient.discovery import build
+# from googleapiclient.http import MediaFileUpload
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -19,7 +20,7 @@ def get_last_file_date(creds, folder_id):
     # Prints the date of the last file in the specified folder.
 
     try:
-        service = build('drive', 'v3', credentials=creds)
+        service = googleapiclient.discovery.build('drive', 'v3', credentials=creds)
 
         # Call the Drive v3 API to get the files in the specified folder
         results = service.files().list(
@@ -369,7 +370,7 @@ def upload_to_googledrive(filename):
     creds = Credentials.from_authorized_user_file(token_filename)
 
     # Build the service
-    drive_service = build('drive', 'v3', credentials=creds)
+    drive_service = googleapiclient.discovery.build('drive', 'v3', credentials=creds)
 
     # The ID of the folder where you want to upload the file
     folder_id = '1vAzq3KU_dFsQbQCD-u1oBCFpbdbc3MSt'  # "Inoreader data" folder on ds@hrinfo
@@ -381,7 +382,7 @@ def upload_to_googledrive(filename):
     }
 
     # The actual file to upload
-    media = MediaFileUpload(filename, mimetype='text/csv')  # replace with your file path
+    media = googleapiclient.http.MediaFileUpload(filename, mimetype='text/csv')  # replace with your file path
 
     # Upload the file
     file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
@@ -425,7 +426,7 @@ def upload_csv_to_googledrive(creds, filename, folder_id, filepath):
     # Uploads a file to Google Drive.
     try:
         # Call the Drive v3 API
-        drive_service = build('drive', 'v3', credentials=creds)
+        drive_service = googleapiclient.discovery.build('drive', 'v3', credentials=creds)
 
         # Metadata about the file
         file_metadata = {
@@ -434,7 +435,7 @@ def upload_csv_to_googledrive(creds, filename, folder_id, filepath):
         }
 
         # The actual file to upload
-        media = MediaFileUpload(filepath + "/" + filename, mimetype='text/csv')  # replace with your file path
+        media = googleapiclient.http.MediaFileUpload(filepath + "/" + filename, mimetype='text/csv')  # replace with your file path
 
         # Upload the file
         file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
