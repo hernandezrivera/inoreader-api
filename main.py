@@ -53,10 +53,10 @@ if len(articles) > 0:
     categories_filename = f"categories-{start_date_str}-{end_date_str}.csv"
     articles_filename = f"articles-{start_date_str}-{end_date_str}.csv"
 
-    inoreader_functions.datalist_to_csv(folder_name + "/" + feeds_list_filename, feeds_list)
-    inoreader_functions.datalist_to_csv(folder_name + "/" + feeds_filename, feeds)
-    inoreader_functions.datalist_to_csv(folder_name + "/" + categories_filename, categories)
-    inoreader_functions.datalist_to_csv(folder_name + "/" + articles_filename, articles)
+    inoreader_functions.datalist_to_csv(folder_name, feeds_list_filename, feeds_list)
+    inoreader_functions.datalist_to_csv(folder_name, feeds_filename, feeds)
+    inoreader_functions.datalist_to_csv(folder_name, categories_filename, categories)
+    inoreader_functions.datalist_to_csv(folder_name, articles_filename, articles)
 
     print("Data saved locally (" + folder_name + "/" + articles_filename + ").")
 

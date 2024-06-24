@@ -158,22 +158,28 @@ def get_categories_old(oauth, n_items, n_calls, date_unix, non_read, debug):
     return feeds, categories, articles
 
 
-def datalist_to_csv(filename, data_list):
+def datalist_to_csv(dir_path, filename, data_list):
     # This function asks the user to overwrite the file if already exists.
 
     # Get the keys (column names) from the first dictionary in the list
+    full_filename = dir_path + "/" + filename
     if data_list:
         keys = data_list[0].keys()
+
+        #creates the directory if it doesn't exist
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
         # Check if the file already exists
-        file_exists = os.path.isfile(filename)
+        file_exists = os.path.isfile(full_filename)
         if file_exists:
-            overwrite = input(f"The file {filename} already exists. Do you want to overwrite it? (yes/no / Default: "
+            overwrite = input(f"The file {full_filename} already exists. Do you want to overwrite it? (yes/no / Default: "
                               f"no): ")
             if (overwrite.lower() != "yes") and (overwrite.lower() != "y"):
                 print("The file was not overwritten.")
                 return
-        # it will append the results at the end
-        with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+        # it will overwrite the results
+        with open(full_filename, 'w', newline='', encoding='utf-8') as csvfile:
             dict_writer = csv.DictWriter(csvfile, keys)
             dict_writer.writeheader()
             # Write the data rows
