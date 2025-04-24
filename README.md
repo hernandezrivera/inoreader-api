@@ -1,4 +1,4 @@
-# Magic Machine Installation Guide
+# Magic Machine Installation Guide 
 
 ## Living Document
 For the most up-to-date instructions, refer to the living document [here](https://docs.google.com/document/d/11KbF64kkdb88O7S9eYw-QZyXgLDLNvABqoMZUrAR2_Q/edit).
